@@ -1,0 +1,5 @@
+package com.sabz.companion;
+public class NightReviewTest {
+ static void check(boolean x,String message){if(!x)throw new AssertionError(message);}
+ public static void main(String[] args){NightReview.Data d=new NightReview.Data();check(NightReview.message(d,true).contains("کامل"),"Missing day");check(!NightReview.message(d,true).contains("امتیاز عادت"),"No incomplete grade");d.complete=true;d.coverage=true;d.water=400;d.activity=0;d.calories=2000;d.protein=56;d.fiber=28;d.sitting=150;d.longest=90;String fa=NightReview.message(d,true);check(fa.contains("آب")&&fa.contains("پیاده‌روی"),"Prioritized suggestions");check(fa.contains("فردا"),"No bedtime catch-up instruction");check(NightReview.score(d)==67,"Shared score formula");d.water=1600;d.activity=22;d.sitting=60;d.longest=60;check(NightReview.score(d)==100,"100 target");check(NightReview.message(d,false).contains("good progress"),"Positive review");d.unknown=true;check(NightReview.message(d,false).contains("unavailable"),"Unknown data");System.out.println("PASS: nightly review incomplete/unknown, targets, score, constructive suggestions, languages.");}
+}

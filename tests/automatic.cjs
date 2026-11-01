@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict'),C=require('../app/src/main/assets/core.js');
+const empty={items:[],sitting:null,activity:null,breaks:null};
+assert.equal(C.hasEntryData(empty),false);
+for(const field of ['sitting','activity','breaks','kegel'])assert(C.hasEntryData({...empty,[field]:0}));
+assert(C.hasEntryData({...empty,noFood:true}));
+assert.deepEqual(C.autoInterval([],11),{slot:9,start:0,end:12,entry:undefined});
+const entry={...empty,id:'a',autoSlot:9,autoStart:0,sitting:0};
+assert.equal(C.autoInterval([entry],11).entry,entry);
+assert.equal(C.autoInterval([entry],17).start,12);
+assert.equal(C.autoInterval([{...entry,autoSlot:12,sitting:null}],17).start,0);
+const foods=[{id:'a'},{id:'b'}];
+const days={'2026-11-01':{entries:[{items:[{food:foods[0],amount:100},{food:foods[0],amount:100},{food:foods[1],amount:200}]},{items:[{food:foods[1],amount:10}]}]}};
+assert.equal(C.frequentFoods(days,foods)[0].id,'b');console.log('PASS automatic intervals, explicit zeros, empty merging, frequency deduplication');
