@@ -52,7 +52,7 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.0.1](https://github.com/zianazari/Green-Apple/releases/tag/v2.0.1), which makes day completion immediate even when some or all fields are empty.
+The latest published version is [2.0.2](https://github.com/zianazari/Green-Apple/releases/tag/v2.0.2). Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
 
 ## Reminders
 
