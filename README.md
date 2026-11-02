@@ -1,77 +1,136 @@
-# Green Apple — سیب سلامت
+<h1><img src="docs/images/green-apple.svg" width="40" height="40" alt="Green apple icon"> Green Apple</h1>
 
-برنامهٔ آفلاین اندروید برای ثبت تغذیه، آب، نشستن و فعالیت روزانه؛ نوشته‌شده با Kotlin و رابط کاملاً بومی Jetpack Compose.
+An offline Android companion for tracking food, water, movement and everyday habits. Built with **Kotlin** and a fully native **Jetpack Compose** interface.
 
-An offline Android nutrition and daily habits tracker, written in Kotlin with a fully native Jetpack Compose interface.
+**Android 11+ · English and Persian · Light and dark themes · No account required**
 
-## Download / دانلود
+[Download the latest release](https://github.com/zianazari/Green-Apple/releases/latest) · [Browse the source](app/src/main/java/com/sabz/companion)
 
-Get **Green-Apple-2.0.1.apk** from [Releases](https://github.com/zianazari/Green-Apple/releases/latest). Android 11 or newer is required. Install over the existing Green Apple / Sabz app to retain data; do not uninstall first.
+## Screenshots
 
-نسخهٔ جدید را روی نسخهٔ قبلی نصب کنید. قالب پشتیبان و اطلاعات روزهای قبلی حفظ شده است؛ نیازی به حذف برنامه یا ورود دوبارهٔ اطلاعات نیست.
+The English interface, captured from version **2.0.1** on an Android emulator. All records shown are sample data.
 
-## Native version 2.0
+<table>
+  <tr>
+    <th>Daily overview · dark theme</th>
+    <th>Food logging · light theme</th>
+  </tr>
+  <tr>
+    <td><img src="docs/images/home.png" width="320" alt="English daily overview with the green apple companion, nutrition bars and water progress"></td>
+    <td><img src="docs/images/food-log.png" width="320" alt="English vegetable list with illustrated foods and inline portion controls"></td>
+  </tr>
+  <tr>
+    <th>Calendar and history</th>
+    <th>Appearance and language</th>
+  </tr>
+  <tr>
+    <td><img src="docs/images/calendar.png" width="320" alt="Gregorian calendar showing recorded days"></td>
+    <td><img src="docs/images/settings.png" width="320" alt="English settings with visible theme, language and calendar choices"></td>
+  </tr>
+</table>
 
-- All production Android code is Kotlin. Every app screen is Jetpack Compose.
-- PDF reports use Android Canvas, text shaping and PdfDocument.
-- No WebView, JavaScript interface, HTML, CSS or JavaScript runtime.
-- Food illustrations are bundled native VectorDrawables, adapted from Twemoji SVG assets.
-- Persian RTL with Vazirmatn; English; Persian and Gregorian calendars.
-- Light and charcoal-blue dark themes; visible language, theme and calendar choices.
-- Immediate food/drink logging, frequent foods, custom recipes and editable history.
-- Finish a day with one tap, even if some or all fields are unrecorded; completed days remain editable and can be reopened.
-- Automatic three-hour intervals; empty periods merge forward within the day.
-- A newly recorded interval defaults to one hour of sitting, adjustable to actual time or zero.
-- Walking, moderate activity, stretching, other activities and separate Kegel session counts.
-- Daily nutrition, water and activity summaries; animated green apple and seven-day habit score.
-- Native reminders, nightly reviews, PDF export and JSON backup/restore.
+## What you can do
 
-## Data compatibility and privacy
+- **Log food and drinks immediately.** Browse illustrated categories, search the catalogue or use your personal frequent-food list. Adjust portions with inline **+ / −** controls or enter an exact amount.
+- **Use practical portions.** The first food increment adds its base portion; subsequent steps adjust it by 20%. Drinks use 200 ml glasses.
+- **Track daily nutrition.** View calories, protein, fiber, plain water and total drinks against configurable goals.
+- **Record movement and sitting.** Log walking, moderate exercise, stretching and other activity in minutes. Track sitting duration, standing breaks and Kegel sessions separately.
+- **Let intervals organize themselves.** Records are grouped into three-hour intervals. Empty periods merge into the next recorded interval within the same day. A newly recorded interval includes an adjustable one-hour sitting default.
+- **Review and edit past days.** Choose a date using a Gregorian or Persian calendar, inspect individual entries and update them.
+- **Finish a day with one tap.** Empty or partially recorded days can be finished too. Reopen a day or edit its records later.
+- **Follow your habits over time.** An animated green apple accompanies your seven-day habit score. Only finished days with known nutrition contribute to the average.
+- **Keep and export your records.** Save a native PDF report for a range of up to 31 days, or export and restore a JSON backup.
 
-The application ID remains `com.sabz.companion`. The published APK uses the original signing key.
+English and Persian interfaces include right-to-left support and the bundled Vazirmatn font. Light and charcoal-blue dark themes are available. Language, theme and calendar options are visible together in Settings.
 
-The native version reads the existing version-1 JSON from `SharedPreferences("data")["state"]`. It preserves the original record IDs, embedded food data, custom foods, dates and goals. On the first successful native save, it also retains the original state as `preNativeState`. Invalid existing data disables writes and can be exported for recovery; invalid imports do not replace the current state.
+## Install or update
 
-Data stays on the device. There is no account, backend, analytics or INTERNET permission. Back up before uninstalling or changing phones. Values are approximate and goals are configurable; this is general habit tracking, not medical diagnosis.
+1. Open [Releases](https://github.com/zianazari/Green-Apple/releases/latest).
+2. Download the APK file under **Assets**.
+3. Open it on a device running **Android 11 or newer**. If Android requests permission, allow installation from the app you used to open the file.
+4. Install over the existing Green Apple app to retain its records.
 
-## Build
+Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-Requires JDK 17, Android SDK platform 35 and Build Tools 35.0.0. Open in Android Studio, or set `ANDROID_HOME` and run:
+The latest published version is [2.0.1](https://github.com/zianazari/Green-Apple/releases/tag/v2.0.1), which makes day completion immediate even when some or all fields are empty.
 
-```sh
-./gradlew :app:assembleDebug
-```
+## Reminders
 
-The checked-in Gradle 8.9 wrapper pins the official distribution checksum. Kotlin/Compose compiler 2.0.21, Compose BOM 2024.12.01 and AGP 8.7.3 are pinned to a toolchain verified with SDK 35.
+Check-in prompts are scheduled for **09:00, 12:00, 15:00 and 18:00**. A daily review is scheduled for **22:00**. Movement and water reminders occur every two hours within your chosen waking hours; coinciding reminders are combined.
 
-Release compilation:
+Enable reminders in Settings and grant Android's notification permission. Exact-alarm access and device battery settings can affect delivery time. Force-stopping the app prevents reminders until it is opened again.
 
-```sh
-./gradlew :app:assembleRelease
-```
+## Privacy and existing records
 
-This produces an unsigned APK under `app/build/outputs/apk/release/`. Sign it with your own protected signing key. The original release signing key is deliberately excluded from the repository. Builds signed with another key cannot replace the published installation.
+Your records stay on the device. The app has no account, backend, analytics or <code>INTERNET</code> permission. External source links open in your browser.
+
+The native version preserves compatibility with earlier Green Apple / Sabz installations:
+
+- The application ID remains <code>com.sabz.companion</code>.
+- Published APKs use the original signing key.
+- Existing version-1 JSON records and backups remain readable.
+- Record IDs, embedded food data, custom foods, dates and daily goals are preserved.
+- The first successful native save retains the original state as <code>preNativeState</code>.
+- Invalid existing data disables writes and can be exported for recovery. An invalid import does not replace current records.
+
+Nutrition values are approximate and goals are configurable. Green Apple supports general habit tracking and does not provide a medical diagnosis.
+
+## Build from source
+
+### Requirements
+
+- **JDK 17**
+- **Android SDK platform 35**
+- **Android Build Tools 35.0.0**
+
+Open the project in Android Studio, or set <code>JAVA_HOME</code> and <code>ANDROID_HOME</code> and use the included wrapper:
+
+    ./gradlew :app:assembleDebug
+
+The debug APK is written to <code>app/build/outputs/apk/debug/app-debug.apk</code>.
+
+To compile a release:
+
+    ./gradlew :app:assembleRelease
+
+The unsigned APK is written to <code>app/build/outputs/apk/release/app-release-unsigned.apk</code>. Sign it with a protected signing key before distributing it. A build signed with a different key cannot replace the published installation.
+
+The project pins Gradle **8.9**, AGP **8.7.3**, Kotlin and the Compose compiler **2.0.21**, Compose BOM **2024.12.01**, and Build Tools **35.0.0**. The wrapper includes the official Gradle distribution checksum. The release signing key is excluded from the repository.
 
 ## Verification
 
-```sh
-./gradlew :app:testDebugUnitTest :app:lintDebug
-./gradlew :app:connectedDebugAndroidTest
-```
+Run the unit tests and Android compatibility checks:
 
-Tests include numerical parity with 25 legacy data fixtures, legacy backup validation, automatic interval merging, explicit zeros, Kegel units and local-time/DST reminders. Native device tests cover immediate food registration, settings persistence, custom-food drafts, sitting controls, Persian calendar names and native PDF generation.
+    ./gradlew :app:testDebugUnitTest :app:lintDebug
 
-The in-place upgrade is additionally tested by installing the native build over an older app in an emulator and comparing the stored legacy data.
+With an emulator or test device connected:
 
-## Architecture
+    ./gradlew :app:connectedDebugAndroidTest
 
-- `Domain.kt`: deterministic calculations, intervals, validation and score.
-- `Store.kt`: atomic persisted state and backwards-compatible migration.
-- `AppUi.kt`, `LogScreens.kt`, `HistoryScreens.kt`, `SettingsScreen.kt`: native screens and navigation.
-- `CalendarTools.kt`: ICU Persian/Gregorian calendar and localized formatting.
-- `NativeReport.kt`: shaped Persian/English native PDF export.
-- `ReminderReceiver.kt`, `ReminderSchedule.kt`: alarms and nightly feedback.
+Tests cover legacy backup validation, numerical parity with 25 legacy data fixtures, interval merging, explicit zeros, separate Kegel counts, local-time and daylight-saving reminder scheduling, and completion of empty or partially recorded days.
 
-## Assets and attribution
+Native UI checks cover food registration, persistent settings, custom-food drafts, sitting controls, Persian calendar names and native PDF generation. An in-place upgrade was also checked in an Android 15 emulator by comparing stored legacy data before and after installation. Physical-device testing has not yet been performed.
 
-Nutrition data: USDA SR Legacy (2018), with source identifiers in the bundled catalogue. Font: Vazirmatn, SIL OFL. Food art: Twemoji © Twitter / jdecked contributors, CC BY 4.0. Original SVGs and license text are retained under `app/src/main/assets/art/`; the displayed artwork is converted to native Android vectors. Green apple launcher artwork is maintained as native vector source.
+## Project structure
+
+| Component | Responsibility |
+| --- | --- |
+| [Domain.kt](app/src/main/java/com/sabz/companion/Domain.kt) | Nutrition totals, validation, intervals and habit scores |
+| [Store.kt](app/src/main/java/com/sabz/companion/Store.kt) | Persisted records, immediate updates and legacy compatibility |
+| [AppUi.kt](app/src/main/java/com/sabz/companion/AppUi.kt) | App theme, navigation and daily overview |
+| [LogScreens.kt](app/src/main/java/com/sabz/companion/LogScreens.kt) | Food, drink, sitting and activity entry |
+| [HistoryScreens.kt](app/src/main/java/com/sabz/companion/HistoryScreens.kt) | Calendars, history, day details, trends and report selection |
+| [SettingsScreen.kt](app/src/main/java/com/sabz/companion/SettingsScreen.kt) | Preferences, goals, reminders and custom foods |
+| [CalendarTools.kt](app/src/main/java/com/sabz/companion/CalendarTools.kt) | ICU Persian/Gregorian calendars and localized formatting |
+| [NativeReport.kt](app/src/main/java/com/sabz/companion/NativeReport.kt) | PDF export using Android text shaping, Canvas and PdfDocument |
+| [ReminderReceiver.kt](app/src/main/java/com/sabz/companion/ReminderReceiver.kt) | Notification delivery and alarm rescheduling |
+| [ReminderSchedule.kt](app/src/main/java/com/sabz/companion/ReminderSchedule.kt) | Local-time alarm calculations and nightly feedback |
+
+All production application code is Kotlin. Screens use Jetpack Compose, reports use Android's native PDF APIs, and food illustrations use VectorDrawables. There is no WebView or JavaScript runtime.
+
+## Data, artwork and attribution
+
+- **Nutrition catalogue:** USDA SR Legacy (2018). Food source identifiers are included in the bundled catalogue.
+- **Typography:** [Vazirmatn](https://github.com/rastikerdar/vazirmatn), distributed under the [SIL Open Font License](app/src/main/assets/Vazirmatn-OFL.txt).
+- **Food illustrations:** Twemoji, copyright Twitter and jdecked contributors, licensed under [CC BY 4.0](app/src/main/assets/art/LICENSE-GRAPHICS). Original SVG sources are retained in <code>app/src/main/assets/art/</code>; displayed artwork is converted to native Android vectors.
+- **Green apple companion and launcher icon:** maintained as native vector artwork in this project.
