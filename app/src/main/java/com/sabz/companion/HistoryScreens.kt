@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import android.icu.util.Calendar
 import java.time.*
@@ -101,14 +102,38 @@ import org.json.JSONObject
 }
 @Composable fun TrendScreen(s:Store,n:NavState){
  val end=LocalDate.parse(n.date);val days=Domain.week(s.root,end);val scores=days.mapNotNull{it.second};val average=if(scores.isEmpty())null else scores.average().toInt()
- Panel{Heading(s.t("همراهی هفت‌روزه","Seven-day habits"));Row(verticalAlignment=Alignment.CenterVertically){Apple(s,average);Column{Text(average?.let{s.num(it)+"٪"}?:"—",fontSize=38.sp);Hint(s.num(scores.size)+" "+s.t("روز با اطلاعات کامل","days with complete data"))}};Hint(s.t("روزهای ناقص یا با ارزش غذایی نامشخص در میانگین نیستند.","Incomplete days and days with unknown nutrition are excluded."))}
- days.forEach{(date,score)->Panel{
-  TextButton(onClick={n.date=date.toString();n.go("details")}){Text(s.dateLabel(date))}
-  if(score!=null){LinearProgressIndicator(progress={score/100f},modifier=Modifier.fillMaxWidth());Text(s.num(score)+"٪")}else Hint(s.t("اطلاعات کافی نیست","Not enough data"))
-  val v=Domain.totals(s.day(date));Hint(s.t("آب: ","Water: ")+s.num(v.getValue("water"))+" ml · "+s.t("فعالیت: ","Activity: ")+s.num(v.getValue("activity"))+" "+s.t("دقیقه","min"))
- }}
- TextButton(onClick={n.dialog="report"}){Text(s.t("گزارش PDF","PDF report"))}
+ Surface(shape=RoundedCornerShape(24.dp),color=MaterialTheme.colorScheme.surfaceVariant){
+  Row(Modifier.fillMaxWidth().padding(16.dp),verticalAlignment=Alignment.CenterVertically){
+   Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)){
+    Text(s.t("همراهی هفت‌روزه","Seven-day habits"),style=MaterialTheme.typography.titleMedium,fontWeight=FontWeight.Bold)
+    Text(average?.let{s.num(it)+"٪"}?:"—",fontSize=36.sp,lineHeight=42.sp,fontWeight=FontWeight.Bold)
+    Text(s.num(scores.size)+" "+s.t("روز با اطلاعات کامل","days with complete data"),style=MaterialTheme.typography.bodyMedium)
+   }
+   Apple(s,average)
+  }
+ }
+ Hint(s.t("فقط روزهای پایان‌یافته با ارزش غذایی مشخص در میانگین هستند.","Only finished days with known nutrition contribute to the average."))
+ Heading(s.t("روند روزانه","Daily history"))
+ Panel{
+  Column{
+   days.forEachIndexed{index,(date,score)->
+    Column(Modifier.fillMaxWidth().clickable{n.date=date.toString();n.go("details")}.padding(vertical=10.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
+     Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)){
+      Text(s.dateLabel(date),modifier=Modifier.weight(1f),style=MaterialTheme.typography.bodyLarge,fontWeight=FontWeight.Medium)
+      Text(score?.let{s.num(it)+"٪"}?:"—",fontSize=18.sp,lineHeight=24.sp,fontWeight=FontWeight.Bold,color=MaterialTheme.colorScheme.primary)
+     }
+     if(score!=null)LinearProgressIndicator(progress={score/100f},modifier=Modifier.fillMaxWidth().height(5.dp),trackColor=MaterialTheme.colorScheme.outline)
+     else Text(s.t("اطلاعات کافی نیست","Not enough data"),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
+     val v=Domain.totals(s.day(date))
+     Text(s.t("آب: ","Water: ")+s.num(v.getValue("water"))+" ml · "+s.t("فعالیت: ","Activity: ")+s.num(v.getValue("activity"))+" "+s.t("دقیقه","min"),style=MaterialTheme.typography.bodyLarge)
+    }
+    if(index<days.lastIndex)HorizontalDivider(color=MaterialTheme.colorScheme.outline.copy(alpha=.5f))
+   }
+  }
+ }
+ TextButton(onClick={n.dialog="report"}){Text(s.t("گزارش PDF","PDF report"),style=MaterialTheme.typography.bodyLarge)}
 }
+
 @Composable fun ReportDialog(s:Store,host:MainActivity,date:LocalDate,onDismiss:()->Unit){
  var start by rememberSaveable{mutableStateOf(date.minusDays(6).toString())};var end by rememberSaveable{mutableStateOf(date.toString())};var choose by rememberSaveable{mutableStateOf<String?>(null)}
  AlertDialog(onDismissRequest=onDismiss,title={Text(s.t("گزارش PDF","PDF report"))},text={Column{TextButton(onClick={choose="start"}){Text(s.t("از: ","From: ")+s.dateLabel(LocalDate.parse(start)))};TextButton(onClick={choose="end"}){Text(s.t("تا: ","To: ")+s.dateLabel(LocalDate.parse(end)))};Hint(s.t("بازهٔ ۱ تا ۳۱ روز؛ اطلاعات هر روز در صفحهٔ جدا.","Choose 1–31 days; each day begins on its own page."))}},confirmButton={TextButton(onClick={val a=LocalDate.parse(start);val b=LocalDate.parse(end);if(b>=a&&java.time.temporal.ChronoUnit.DAYS.between(a,b)<=30){host.report(a,b);onDismiss()}else host.toast(s.t("بازه باید ۱ تا ۳۱ روز باشد.","Choose 1–31 days."))}){Text(s.t("ذخیره PDF","Save PDF"))}},dismissButton={TextButton(onClick=onDismiss){Text(s.t("انصراف","Cancel"))}})

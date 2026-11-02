@@ -29,6 +29,12 @@ The English interface, captured from version **2.1.0** on an Android emulator. A
   </tr>
 </table>
 
+### Updated Trends
+
+Version **2.1.2** uses a compact daily-history list and the same text sizing as Home. This screenshot uses sample records and the midnight-blue theme.
+
+<img src="docs/images/trends.png" width="320" alt="Compact English Trends screen with larger dates, water and activity summaries, and daily progress bars">
+
 ## What you can do
 
 - **Log food and drinks immediately.** Browse illustrated categories, search the catalogue or use your personal frequent-food list. Adjust portions with inline **+ / −** controls or enter an exact amount.
@@ -53,7 +59,7 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.1.1](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.1), which restores the midnight-blue dark palette. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+The latest published version is [2.1.2](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.2), which makes Trends more compact and aligns its typography with Home. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
 
 ## Initial profile and goal estimates
 
