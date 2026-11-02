@@ -6,7 +6,7 @@ An offline Android nutrition and daily habits tracker, written in Kotlin with a 
 
 ## Download / دانلود
 
-Get **Green-Apple-2.0.0.apk** from [Releases](https://github.com/zianazari/Green-Apple/releases/latest). Android 11 or newer is required. Install over the existing Green Apple / Sabz app to retain data; do not uninstall first.
+Get **Green-Apple-2.0.1.apk** from [Releases](https://github.com/zianazari/Green-Apple/releases/latest). Android 11 or newer is required. Install over the existing Green Apple / Sabz app to retain data; do not uninstall first.
 
 نسخهٔ جدید را روی نسخهٔ قبلی نصب کنید. قالب پشتیبان و اطلاعات روزهای قبلی حفظ شده است؛ نیازی به حذف برنامه یا ورود دوبارهٔ اطلاعات نیست.
 
@@ -19,6 +19,7 @@ Get **Green-Apple-2.0.0.apk** from [Releases](https://github.com/zianazari/Green
 - Persian RTL with Vazirmatn; English; Persian and Gregorian calendars.
 - Light and charcoal-blue dark themes; visible language, theme and calendar choices.
 - Immediate food/drink logging, frequent foods, custom recipes and editable history.
+- Finish a day with one tap, even if some or all fields are unrecorded; completed days remain editable and can be reopened.
 - Automatic three-hour intervals; empty periods merge forward within the day.
 - A newly recorded interval defaults to one hour of sitting, adjustable to actual time or zero.
 - Walking, moderate activity, stretching, other activities and separate Kegel session counts.

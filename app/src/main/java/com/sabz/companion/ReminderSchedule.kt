@@ -14,7 +14,7 @@ object ReminderSchedule {
 object NightReview {
  fun message(day:org.json.JSONObject,fa:Boolean):String {
   fun t(a:String,b:String)=if(fa)a else b
-  if(!day.optBoolean("complete")||!Domain.coverage(day))return t("اطلاعات امروز کامل نشده است. ثبت‌ها را مرور کن و پس از تکمیل، روز را کامل اعلام کن.","Today's record is incomplete. Review your entries and mark the day complete after logging everything.")
+  if(!day.optBoolean("complete"))return t("اطلاعات امروز کامل نشده است. ثبت‌ها را مرور کن و پس از تکمیل، روز را کامل اعلام کن.","Today's record is incomplete. Review your entries and mark the day complete after logging everything.")
   val score=Domain.score(day)?:return t("بخشی از ارزش غذایی نامشخص است؛ اطلاعات خوراکی سفارشی را کامل کن.","Some nutrition is unknown. Complete the custom food's nutrition information.")
   val v=Domain.totals(day);val g=day.getJSONObject("targets");val tips=mutableListOf<String>()
   if(v.getValue("water")<g.getDouble("water")*.9)tips+=t("فردا آب را در طول روز منظم‌تر بنوش تا به هدف انتخابی نزدیک شوی.","Spread water through the day toward your chosen target.")

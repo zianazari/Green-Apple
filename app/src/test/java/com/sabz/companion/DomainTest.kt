@@ -55,4 +55,20 @@ class DomainTest {
   val d=Domain.day(Domain.blank(),"2026-11-01")
   assertTrue(NightReview.message(d,false).contains("incomplete"))
  }
+ @Test fun completedEmptyOrPartialDaysAreValidBackupsAndGetAReview(){
+  val state=Domain.blank();val date="2026-11-02"
+  val empty=Domain.day(state,date).put("complete",true)
+  state.getJSONObject("days").put(date,empty)
+  Domain.validate(state)
+  assertFalse(Domain.coverage(empty))
+  assertNotNull(Domain.score(empty))
+  assertFalse(NightReview.message(empty,false).contains("incomplete"))
+  val partial=Domain.interval(state,LocalDate.parse(date),LocalDateTime.of(2026,11,2,9,0)).put("sitting",60).put("longest",60)
+  empty.put("entries",JSONArray().put(partial))
+  Domain.validate(state)
+  assertFalse(Domain.coverage(empty))
+  assertNotNull(Domain.score(empty))
+  assertFalse(NightReview.message(empty,false).contains("incomplete"))
+ }
+
 }

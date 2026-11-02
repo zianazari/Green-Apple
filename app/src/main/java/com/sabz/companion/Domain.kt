@@ -89,7 +89,6 @@ object Domain {
     if(e.has("autoSlot")){require(e.getInt("autoSlot") in 0..21&&e.getInt("autoSlot")%3==0);require(e.getInt("autoStart") in 0..e.getInt("autoSlot")&&e.getInt("autoStart")%3==0)}
    }
    val t=totals(d);require(t.getValue("sitting")<=1440&&t.getValue("activity")<=1440)
-   if(d.getBoolean("complete"))require(coverage(d))
   }
   return s
  }

@@ -90,7 +90,6 @@ val AppTypography=Typography().let{b->b.copy(
     "food"->s.foods().find{it.getString("id")==nav.foodId}?.let{FoodDialog(s,nav,it,::act)}
     "custom"->CustomDialog(s,onDismiss={nav.dialog=null},onSave={act{s.custom(it);nav.dialog=null}})
     "report"->ReportDialog(s,host,LocalDate.parse(nav.date)){nav.dialog=null}
-    "complete"->AlertDialog(onDismissRequest={nav.dialog=null},title={Text(s.t("اطلاعات روز کامل است؟","Is this day's record complete?"))},text={Text(s.t("تأیید کن همهٔ مصرف و فعالیت این روز را وارد کرده‌ای.","Confirm you have logged all food, drinks and activity for this day."))},confirmButton={TextButton(onClick={act{s.complete(LocalDate.parse(nav.date));nav.dialog=null}}){Text(s.t("تأیید","Confirm"))}},dismissButton={TextButton(onClick={nav.dialog=null}){Text(s.t("انصراف","Cancel"))}})
    }
    host.incoming?.let{raw->AlertDialog(onDismissRequest={host.clearIncoming()},title={Text(s.t("بازیابی پشتیبان","Restore backup"))},text={Text(s.t("اطلاعات فعلی با این پشتیبان جایگزین می‌شود.","This backup will replace the current data."))},confirmButton={TextButton(onClick={act{s.restore(raw);host.clearIncoming();nav.go("home")}}){Text(s.t("بازیابی","Restore"))}},dismissButton={TextButton(onClick={host.clearIncoming()}){Text(s.t("انصراف","Cancel"))}})}
   }

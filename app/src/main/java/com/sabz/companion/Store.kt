@@ -71,7 +71,7 @@ class Store(val context: Context) {
   if(exact==null){val e=entry(date,edit);val value=e.objects("items").filter{it.getJSONObject("food").getString("id")==f.getString("id")}.sumOf{it.number("amount")};cache("food:$date:"+e.getString("id")+":"+f.getString("id"),value.toString())}
  }
  fun delete(date:LocalDate,id:String){update{val d=Domain.day(it,date.toString());d.put("entries",jsonArray(d.objects("entries").filter{e->e.getString("id")!=id})).put("complete",false);it.getJSONObject("days").put(date.toString(),d)}}
- fun complete(date:LocalDate){update{val d=Domain.day(it,date.toString());require(d.optBoolean("complete")||Domain.coverage(d)){t("غذا، نوشیدنی، نشستن و فعالیت را ثبت کن؛ صفر هم قابل ثبت است.","Record food, drinks, sitting and activity; explicit zero is allowed.")};d.put("complete",!d.optBoolean("complete"));it.getJSONObject("days").put(date.toString(),d)}}
+ fun complete(date:LocalDate){update{val d=Domain.day(it,date.toString());d.put("complete",!d.optBoolean("complete"));it.getJSONObject("days").put(date.toString(),d)}}
  fun cache(key:String,value:String){update{val ui=it.optJSONObject("ui")?:JSONObject().put("sessions",JSONObject()).put("forms",JSONObject()).also{u->it.put("ui",u)};val forms=ui.optJSONObject("forms")?:JSONObject().also{f->ui.put("forms",f)};forms.put(key,value)}}
  fun cached(key:String,default:String="")=root.optJSONObject("ui")?.optJSONObject("forms")?.optString(key,default)?:default
  fun custom(f:JSONObject){Domain.validateFood(f);update{it.getJSONArray("custom").put(f.copyJson().put("id","custom-"+UUID.randomUUID()));val forms=it.optJSONObject("ui")?.optJSONObject("forms");forms?.keys()?.asSequence()?.filter{k->k.startsWith("native-custom:")}?.toList()?.forEach{forms.remove(it)}}}

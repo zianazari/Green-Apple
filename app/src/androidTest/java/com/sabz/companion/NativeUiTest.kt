@@ -93,4 +93,23 @@ class NativeUiTest {
   rule.onRoot().captureToImage().asAndroidBitmap().let{bmp->File(rule.activity.cacheDir,"native-settings-dark.png").outputStream().use{bmp.compress(Bitmap.CompressFormat.PNG,100,it)}}
  }
 
+ @Test fun finishDayWithNoEntriesOrMissingFieldsNeedsNoConfirmation(){
+  rule.onNodeWithText("جزئیات و ویرایش روز").performScrollTo().performClick()
+  rule.onNodeWithText("همهٔ اطلاعات روز را ثبت کرده‌ام").performScrollTo().performClick()
+  rule.onNodeWithText("باز کردن روز برای ثبت").assertExists()
+  rule.runOnIdle{
+   val s=rule.activity.store;assertTrue(s.day(LocalDate.now()).getBoolean("complete"))
+   assertEquals(0,s.day(LocalDate.now()).objects("entries").size)
+   assertTrue(Store(rule.activity).day(LocalDate.now()).getBoolean("complete"))
+   s.restore(s.root.toString())
+  }
+  rule.onNodeWithText("باز کردن روز برای ثبت").performClick()
+  rule.runOnIdle{val s=rule.activity.store;s.mutate(LocalDate.now(),null){it.put("sitting",0)}}
+  rule.onNodeWithText("همهٔ اطلاعات روز را ثبت کرده‌ام").performScrollTo().performClick()
+  rule.runOnIdle{
+   val s=rule.activity.store;assertTrue(s.day(LocalDate.now()).getBoolean("complete"))
+   assertFalse(Domain.coverage(s.day(LocalDate.now())))
+  }
+ }
+
 }

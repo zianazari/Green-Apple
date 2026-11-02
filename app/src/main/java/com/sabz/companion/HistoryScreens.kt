@@ -74,7 +74,7 @@ import org.json.JSONObject
   TextButton(onClick={deleteId=e.getString("id")}){Text(s.t("حذف نوبت","Delete interval"),color=MaterialTheme.colorScheme.error)}
  }}
  Button(onClick={n.edit=null;n.go("quick")},modifier=Modifier.fillMaxWidth()){Text(s.t("ثبت اطلاعات","Log data"))}
- OutlinedButton(onClick={if(d.optBoolean("complete"))act{s.complete(date)} else n.dialog="complete"},modifier=Modifier.fillMaxWidth()){Text(if(d.optBoolean("complete"))s.t("باز کردن روز برای ثبت","Reopen day") else s.t("همهٔ اطلاعات روز را ثبت کرده‌ام","I have recorded the whole day"))}
+ OutlinedButton(onClick={act{s.complete(date)}},modifier=Modifier.fillMaxWidth()){Text(if(d.optBoolean("complete"))s.t("باز کردن روز برای ثبت","Reopen day") else s.t("همهٔ اطلاعات روز را ثبت کرده‌ام","I have recorded the whole day"))}
  Domain.score(d)?.let{Heading(s.t("امتیاز روز: ","Day score: ")+s.num(it)+"٪")}
  TextButton(onClick={n.dialog="report"}){Text(s.t("گزارش PDF","PDF report"))}
  if(deleteId!=null)AlertDialog(onDismissRequest={deleteId=null},title={Text(s.t("این نوبت حذف شود؟","Delete this interval?"))},confirmButton={TextButton(onClick={act{s.delete(date,deleteId!!);deleteId=null}}){Text(s.t("حذف","Delete"))}},dismissButton={TextButton(onClick={deleteId=null}){Text(s.t("انصراف","Cancel"))}})
