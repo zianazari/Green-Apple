@@ -15,20 +15,25 @@ import java.time.LocalDate
 import kotlin.math.*
 
 @Composable fun Stepper(label:String,value:String,minus:()->Unit,plus:()->Unit,enabledMinus:Boolean=true){
- Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.SpaceBetween){
-  OutlinedButton(onClick=minus,enabled=enabledMinus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label −"}){Text("−",fontSize=22.sp)}
-  Text(value,modifier=Modifier.weight(1f),textAlign=androidx.compose.ui.text.style.TextAlign.Center)
-  OutlinedButton(onClick=plus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label +"}){Text("+",fontSize=22.sp)}
+ Surface(shape=RoundedCornerShape(14.dp),color=MaterialTheme.colorScheme.surfaceVariant){
+  Row(Modifier.fillMaxWidth().padding(4.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.SpaceBetween){
+   FilledTonalButton(onClick=minus,enabled=enabledMinus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label −"},shape=RoundedCornerShape(11.dp)){Text("−",fontSize=22.sp)}
+   Text(value,modifier=Modifier.weight(1f),textAlign=androidx.compose.ui.text.style.TextAlign.Center)
+   FilledTonalButton(onClick=plus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label +"},shape=RoundedCornerShape(11.dp)){Text("+",fontSize=22.sp)}
+  }
  }
 }
+
 @Composable fun FoodRow(s:Store,n:NavState,f:JSONObject,act:(()->Unit)->Unit){
  val date=LocalDate.parse(n.date);val e=s.entry(date,n.edit,n.clock);val amount=e.objects("items").filter{it.getJSONObject("food").getString("id")==f.getString("id")}.sumOf{it.number("amount")}
- Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(7.dp)){
-  Row(Modifier.fillMaxWidth().clickable{n.foodId=f.getString("id");n.dialog="food"}.padding(vertical=8.dp),verticalAlignment=Alignment.CenterVertically){
-   FoodArt(f.optString("emoji"),36);Spacer(Modifier.width(10.dp));Text(s.foodName(f),modifier=Modifier.weight(1f));Text("ⓘ",color=MaterialTheme.colorScheme.primary)
+ Surface(shape=RoundedCornerShape(16.dp),color=if(s.dark)androidx.compose.ui.graphics.Color(0xFF303747) else androidx.compose.ui.graphics.Color(0xFFF0F4EF)){
+ Column(Modifier.fillMaxWidth().padding(10.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
+  Row(Modifier.fillMaxWidth().clickable{n.foodId=f.getString("id");n.dialog="food"}.padding(vertical=3.dp),verticalAlignment=Alignment.CenterVertically){
+   FoodArt(f.optString("emoji"),32);Spacer(Modifier.width(10.dp));Text(s.foodName(f),modifier=Modifier.weight(1f));Text("ⓘ",color=MaterialTheme.colorScheme.primary)
   }
   Stepper(s.foodName(f),if(f.optBoolean("drink"))s.num(amount/200,1)+" "+s.t("لیوان","glasses") else s.num(amount,1)+" "+s.t("گرم","g"),{act{s.food(date,n.edit,f,-1)}},{act{s.food(date,n.edit,f)}},amount>0)
  }
+}
 }
 @Composable fun Frequent(s:Store,n:NavState,act:(()->Unit)->Unit){
  val foods=Domain.frequent(s.root,s.foods())
@@ -98,9 +103,8 @@ fun activityName(s:Store,id:String)=when(id){"walk"->s.t("پیاده‌روی","
  TextButton(onClick={n.back()}){Text("‹ "+if(n.category!=null||n.search.isNotBlank())s.t("دسته‌بندی‌ها","Categories") else s.t("ثبت سریع","Quick log"))}
  OutlinedTextField(n.search,{n.search=it},label={Text(s.t("جستجوی خوراکی","Search foods"))},modifier=Modifier.fillMaxWidth(),singleLine=true)
  if(n.category==null&&n.search.isBlank()){
-  Frequent(s,n,act)
   s.categories.chunked(2).forEach{pair->Row(horizontalArrangement=Arrangement.spacedBy(12.dp)){pair.forEach{c->
-   FilledTonalButton(onClick={n.category=c.getString("id")},shape=RoundedCornerShape(18.dp),modifier=Modifier.weight(1f).heightIn(min=130.dp)){Column(horizontalAlignment=Alignment.CenterHorizontally){FoodArt(c.getString("emoji"),48);Text(s.foodName(c),textAlign=androidx.compose.ui.text.style.TextAlign.Center);Hint(s.num(s.foods().count{it.getString("cat")==c.getString("id")})+" "+s.t("خوراکی","items"))}}
+   FilledTonalButton(onClick={n.category=c.getString("id")},shape=RoundedCornerShape(18.dp),modifier=Modifier.weight(1f).heightIn(min=108.dp)){Column(horizontalAlignment=Alignment.CenterHorizontally){FoodArt(c.getString("emoji"),48);Text(s.foodName(c),textAlign=androidx.compose.ui.text.style.TextAlign.Center);Hint(s.num(s.foods().count{it.getString("cat")==c.getString("id")})+" "+s.t("خوراکی","items"))}}
   };if(pair.size==1)Spacer(Modifier.weight(1f))}}
  }else{
   Panel{

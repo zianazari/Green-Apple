@@ -3,6 +3,8 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.*
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,8 +19,8 @@ import java.time.LocalDate
 
 @Composable fun ChoiceGroup(title:String,value:String,options:List<Pair<String,String>>,onChange:(String)->Unit){
  Column(verticalArrangement=Arrangement.spacedBy(8.dp)){Heading(title);options.chunked(2).forEach{pair->Row(horizontalArrangement=Arrangement.spacedBy(10.dp)){pair.forEach{(id,label)->
-  FilterChip(selected=value==id,onClick={onChange(id)},label={Text(label)},modifier=Modifier.weight(1f).heightIn(min=56.dp))
- };if(pair.size==1)Spacer(Modifier.weight(1f))}}}
+  FilterChip(selected=value==id,onClick={onChange(id)},label={Text(label)},modifier=Modifier.weight(1f).heightIn(min=48.dp))
+ }}}}
 }
 @Composable fun SettingsScreen(s:Store,host:MainActivity,act:(()->Unit)->Unit){
  Panel{
@@ -27,19 +29,39 @@ import java.time.LocalDate
   ChoiceGroup(s.t("زبان","Language"),s.settings.getString("lang"),listOf("fa" to "🇮🇷 فارسی","en" to "🇬🇧 English")){act{s.setSetting("lang",it)}}
   ChoiceGroup(s.t("تقویم","Calendar"),s.settings.getString("calendar"),listOf("persian" to s.t("هجری شمسی","Solar Hijri"),"gregory" to s.t("میلادی","Gregorian"))){act{s.setSetting("calendar",it)}}
  }
- val labels=listOf(Triple("weight",s.t("وزن (کیلوگرم)","Weight (kg)"),30.0..300.0),Triple("kcal",s.t("کالری (kcal)","Calories (kcal)"),800.0..6000.0),Triple("protein",s.t("پروتئین (گرم)","Protein (g)"),20.0..300.0),Triple("fiber",s.t("فیبر (گرم)","Fiber (g)"),10.0..60.0),Triple("water",s.t("آب ساده (میلی‌لیتر)","Plain water (ml)"),200.0..5000.0),Triple("activity",s.t("فعالیت (دقیقه)","Activity (min)"),1.0..300.0),Triple("breakLimit",s.t("حد نشستن پیوسته (دقیقه)","Sitting interval goal (min)"),15.0..120.0))
- val values=remember{mutableStateMapOf<String,String>().apply{labels.forEach{(k,_,_)->put(k,s.cached("settings:s-$k",s.settings.number(k).toString()))};listOf("wake","sleep").forEach{put(it,s.cached("settings:s-$it",s.settings.optInt(it).toString()))}}}
+ val labels=listOf(Triple("kcal",s.t("کالری (kcal)","Calories (kcal)"),800.0..6000.0),Triple("protein",s.t("پروتئین (گرم)","Protein (g)"),20.0..300.0),Triple("fiber",s.t("فیبر (گرم)","Fiber (g)"),10.0..60.0),Triple("water",s.t("آب ساده (میلی‌لیتر)","Plain water (ml)"),200.0..5000.0),Triple("activity",s.t("فعالیت (دقیقه)","Activity (min)"),1.0..300.0),Triple("breakLimit",s.t("حد نشستن پیوسته (دقیقه)","Sitting interval goal (min)"),15.0..120.0))
+ val values=remember{mutableStateMapOf<String,String>().apply{
+  labels.forEach{(k,_,_)->put(k,s.cached("settings:s-$k",s.settings.number(k).toString()))}
+  listOf("height","weight","age").forEach{put(it,s.cached("settings:s-$it",if(s.settings.recorded(it))s.settings.number(it).let{v->if(v%1==0.0)v.toInt().toString() else v.toString()} else ""))}
+  listOf("wake","sleep").forEach{put(it,s.cached("settings:s-$it",s.settings.optInt(it).toString()))}
+ }}
+ var sex by rememberSaveable{mutableStateOf(s.cached("settings:calorieSex",s.settings.optString("calorieSex","unspecified")))}
+ var level by rememberSaveable{mutableStateOf(s.cached("settings:activityLevel",s.settings.optString("activityLevel","inactive")))}
+ fun field(key:String,value:String){values[key]=value;act{s.cache("settings:s-$key",value)}}
+ ProfilePanel(s,values,sex,level,{sex=it;act{s.cache("settings:calorieSex",it)}},{level=it;act{s.cache("settings:activityLevel",it)}},::field){estimate->act{
+  val kcal=Profile.roundedCalories(estimate.calories)
+  require(kcal in 800.0..6000.0){s.t("برآورد خارج از بازهٔ برنامه است؛ هدف مناسب خودت را وارد کن.","Estimate is outside the app's range; enter an appropriate target manually.")}
+  field("kcal",kcal.toInt().toString());field("protein",(kotlin.math.round(estimate.protein*10)/10).toString())
+ }}
+
  var confirmed by rememberSaveable{mutableStateOf(s.settings.optBoolean("confirmed"))}
  Panel{
   Heading(s.t("هدف‌های روزانه","Daily goals"));Hint(s.t("این اعداد مرجع عمومی‌اند؛ هدف مناسب خودت را انتخاب کن. تغییر هدف برای روزهای جدید است.","These are general starting references. Choose goals that suit you. Changes apply to newly recorded days."))
   labels.forEach{(k,label,_)->OutlinedTextField(values[k].orEmpty(),{v->values[k]=v;act{s.cache("settings:s-$k",v)}},label={Text(label)},keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal),singleLine=true,modifier=Modifier.fillMaxWidth())}
   TextButton(onClick={val w=values["weight"]?.inputNumber()?.toDoubleOrNull();if(w!=null){values["protein"]=kotlin.math.round(w*.8).toInt().toString();act{s.cache("settings:s-protein",values["protein"]!!)}}}){Text(s.t("مرجع پروتئین: ۰٫۸ × وزن","Protein reference: 0.8 × weight"))}
   Hint(s.t("۲۰۰۰ کالری مرجع برچسب غذایی است. مرجع فیبر بزرگسالان ۲۲ تا ۳۴ گرم؛ افزایش تدریجی باشد. آب ۱۶۰۰ میلی‌لیتر و حد نشستن ۶۰ دقیقه پیش‌فرض برنامه‌اند، نه نیاز همگانی. هدف فعالیت ۲۲ دقیقه، تقریب ۱۵۰ دقیقه در هفته است.","2,000 kcal is a food-label reference. Adult fiber reference: 22–34 g; increase gradually. 1,600 ml water and 60-minute sitting intervals are app defaults, not universal requirements. 22 activity minutes approximates 150 minutes weekly."))
-  Row(verticalAlignment=Alignment.CenterVertically){Checkbox(confirmed,{confirmed=it});Text(s.t("هدف‌ها را بررسی کرده‌ام و مناسب من هستند.","I have reviewed these goals and they suit me."))}
+  Row(Modifier.fillMaxWidth().toggleable(value=confirmed,role=Role.Checkbox,onValueChange={confirmed=it}),verticalAlignment=Alignment.CenterVertically){Checkbox(checked=confirmed,onCheckedChange=null);Text(s.t("هدف‌ها را بررسی کرده‌ام و مناسب من هستند.","I have reviewed these goals and they suit me."))}
   Button(onClick={act{
    require(confirmed){s.t("هدف‌ها را تأیید کن.","Confirm the goals.")}
+   val profileRanges=mapOf("height" to 100.0..250.0,"weight" to 30.0..300.0,"age" to 18.0..120.0)
+   val profile=mutableMapOf<String,Double>()
+   profileRanges.forEach{(k,range)->
+    val text=values[k].orEmpty()
+    if(text.isNotBlank()){val v=text.inputNumber().toDoubleOrNull();require(v!=null&&v.isFinite()&&v in range&&(k!="age"||v%1==0.0)){s.t("قد، وزن یا سن معتبر نیست.","Invalid height, weight or age.")};profile[k]=v}
+   }
+   require(s.settings.optBoolean("confirmed")||profile.keys.containsAll(profileRanges.keys)){s.t("برای راه‌اندازی اولیه، قد، وزن و سن را وارد کن.","Enter height, weight and age for initial setup.")}
    val parsed=labels.associate{(k,_,range)->val v=values[k]?.inputNumber()?.toDoubleOrNull();require(v!=null&&v.isFinite()&&v in range){s.t("مقدار هدف معتبر نیست.","Invalid goal value.")};k to v}
-   s.update{r->val settings=r.getJSONObject("settings");parsed.forEach{(k,v)->settings.put(k,v)};settings.put("confirmed",true);val forms=r.optJSONObject("ui")?.optJSONObject("forms");parsed.keys.forEach{forms?.remove("settings:s-$it")}}
+   s.update{r->val settings=r.getJSONObject("settings");parsed.forEach{(k,v)->settings.put(k,v)};profile.forEach{(k,v)->settings.put(k,v)};settings.put("calorieSex",sex).put("activityLevel",level).put("confirmed",true);val forms=r.optJSONObject("ui")?.optJSONObject("forms");(parsed.keys+profile.keys).forEach{forms?.remove("settings:s-$it")};forms?.remove("settings:calorieSex");forms?.remove("settings:activityLevel")}
    host.toast(s.t("هدف‌ها ذخیره شدند.","Goals saved."))
   }},modifier=Modifier.fillMaxWidth()){Text(s.t("ذخیره و تأیید هدف‌ها","Save & confirm goals"))}
  }
@@ -57,8 +79,8 @@ import java.time.LocalDate
  Panel{Heading(s.t("اطلاعات من","My data"));Hint(s.t("اطلاعات روی همین گوشی ذخیره می‌شود. پیش از حذف برنامه یا تعویض گوشی پشتیبان بگیر.","Data stays on this phone. Back up before uninstalling or changing phones."));Button(onClick={host.backup()}){Text(s.t("ذخیرهٔ پشتیبان","Export backup"))};OutlinedButton(onClick={host.importBackup()}){Text(s.t("بازیابی پشتیبان","Restore backup"))}}
  Panel{
   Heading(s.t("منابع و توضیحات","Sources & notes"));Hint(s.t("بررسی منابع: ۲۲ اکتبر ۲۰۲۶. بانک خوراکی‌ها: USDA SR Legacy ۲۰۱۸. سیب سلامت برای پیگیری عمومی تغذیه، آب و فعالیت است؛ مقادیر غذایی تقریبی‌اند.","Sources reviewed October 22, 2026. Food data: USDA SR Legacy 2018. Green Apple tracks general nutrition, water and activity; nutrient values are approximate."))
-  listOf("NIDDK · Fiber & fluids" to "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/eating-diet-nutrition","FDA · Calorie reference" to "https://www.fda.gov/food/nutrition-facts-label/calories-nutrition-facts-label","National Academies · Protein DRI" to "https://www.ncbi.nlm.nih.gov/books/NBK235261/","WHO · Physical activity" to "https://www.who.int/news-room/fact-sheets/detail/physical-activity","USDA · FoodData Central" to "https://fdc.nal.usda.gov/download-datasets/").forEach{(title,url)->TextButton(onClick={act{host.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))}}){Text(title+" ↗")}}
-  Hint(s.t("سیب سلامت","Green Apple")+" 2.0.2 · Android 11+\nKotlin · Jetpack Compose · Vazirmatn / SIL OFL")
+  listOf("Health Canada · Adult energy estimates" to Profile.SOURCE,"NIDDK · Fiber & fluids" to "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/eating-diet-nutrition","FDA · Calorie reference" to "https://www.fda.gov/food/nutrition-facts-label/calories-nutrition-facts-label","National Academies · Protein DRI" to "https://www.ncbi.nlm.nih.gov/books/NBK235261/","WHO · Physical activity" to "https://www.who.int/news-room/fact-sheets/detail/physical-activity","USDA · FoodData Central" to "https://fdc.nal.usda.gov/download-datasets/").forEach{(title,url)->TextButton(onClick={act{host.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))}}){Text(title+" ↗")}}
+  Hint(s.t("سیب سلامت","Green Apple")+" 2.1.0 · Android 11+\nKotlin · Jetpack Compose · Vazirmatn / SIL OFL")
  }
 }
 @Composable fun CustomDialog(s:Store,onDismiss:()->Unit,onSave:(JSONObject)->Unit){

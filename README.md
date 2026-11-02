@@ -8,7 +8,7 @@ An offline Android companion for tracking food, water, movement and everyday hab
 
 ## Screenshots
 
-The English interface, captured from version **2.0.1** on an Android emulator. All records shown are sample data.
+The English interface, captured from version **2.1.0** on an Android emulator. All records shown are sample data.
 
 <table>
   <tr>
@@ -33,6 +33,7 @@ The English interface, captured from version **2.0.1** on an Android emulator. A
 
 - **Log food and drinks immediately.** Browse illustrated categories, search the catalogue or use your personal frequent-food list. Adjust portions with inline **+ / −** controls or enter an exact amount.
 - **Use practical portions.** The first food increment adds its base portion; subsequent steps adjust it by 20%. Drinks use 200 ml glasses.
+- **Set up a starting profile.** Enter height, weight and age together. An optional sex-specific equation and your usual activity level provide an adult maintenance-calorie estimate and a weight-based protein reference. Review, edit and save the targets before logging.
 - **Track daily nutrition.** View calories, protein, fiber, plain water and total drinks against configurable goals.
 - **Record movement and sitting.** Log walking, moderate exercise, stretching and other activity in minutes. Track sitting duration, standing breaks and Kegel sessions separately.
 - **Let intervals organize themselves.** Records are grouped into three-hour intervals. Empty periods merge into the next recorded interval within the same day. A newly recorded interval includes an adjustable one-hour sitting default.
@@ -41,7 +42,7 @@ The English interface, captured from version **2.0.1** on an Android emulator. A
 - **Follow your habits over time.** An animated green apple accompanies your seven-day habit score. Only finished days with known nutrition contribute to the average.
 - **Keep and export your records.** Save a native PDF report for a range of up to 31 days, or export and restore a JSON backup.
 
-English and Persian interfaces include right-to-left support and the bundled Vazirmatn font. Light and charcoal-blue dark themes are available. Language, theme and calendar options are visible together in Settings.
+English and Persian interfaces include right-to-left support and the bundled Vazirmatn font. Light and charcoal-blue dark themes are available. Language, theme and calendar options are visible together in Settings. English is the default for new installations; existing language preferences are preserved. The Log tab sits next to Home, and frequent foods appear only in Quick log. Calendars use orange dots for recorded days, an outline for today, Saturday-first Persian weeks and Sunday-first Gregorian weeks.
 
 ## Install or update
 
@@ -52,7 +53,13 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.0.2](https://github.com/zianazari/Green-Apple/releases/tag/v2.0.2). Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+The latest published version is [2.1.0](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.0). Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+
+## Initial profile and goal estimates
+
+Height, weight and age are stored together in Settings. Calorie estimates use the [2023 DRI adult energy equations published by Health Canada](https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/dietary-reference-intakes/tables/equations-estimate-energy-requirement.html), with a selected sex-specific equation and usual activity category. If sex is not specified, the app shows a range rather than assuming one equation.
+
+Estimates are for weight maintenance in adults aged 19 and above, excluding pregnancy and breastfeeding. The protein starting reference is 0.8 g/kg body weight. Estimates do not automatically replace targets: review the proposed values, apply them and save. Manual targets remain available. Updated goals apply to newly recorded days, preserving the goals attached to historical records.
 
 ## Reminders
 
@@ -115,6 +122,8 @@ Native UI checks cover food registration, persistent settings, custom-food draft
 
 | Component | Responsibility |
 | --- | --- |
+| [Profile.kt](app/src/main/java/com/sabz/companion/Profile.kt) | Adult energy estimates from height, weight, age, sex and activity level |
+| [ProfilePanel.kt](app/src/main/java/com/sabz/companion/ProfilePanel.kt) | Grouped initial measurements, estimate preview and target selection |
 | [Domain.kt](app/src/main/java/com/sabz/companion/Domain.kt) | Nutrition totals, validation, intervals and habit scores |
 | [Store.kt](app/src/main/java/com/sabz/companion/Store.kt) | Persisted records, immediate updates and legacy compatibility |
 | [AppUi.kt](app/src/main/java/com/sabz/companion/AppUi.kt) | App theme, navigation and daily overview |

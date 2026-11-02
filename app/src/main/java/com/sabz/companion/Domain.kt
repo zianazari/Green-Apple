@@ -15,7 +15,7 @@ fun jsonArray(values: List<JSONObject>) = JSONArray().also { a -> values.forEach
 object Domain {
  val goalKeys = listOf("kcal","protein","fiber","water","activity","breakLimit")
  val activityIds = listOf("walk","exercise","stretch","other")
- fun defaults() = JSONObject("""{"lang":"fa","theme":"light","calendar":"persian","kcal":2000,"protein":56,"fiber":28,"water":1600,"activity":22,"breakLimit":60,"weight":70,"confirmed":false,"reminders":false,"wake":8,"sleep":22,"triggers":[]}""")
+ fun defaults() = JSONObject("""{"lang":"en","height":null,"age":null,"calorieSex":"unspecified","activityLevel":"inactive","theme":"light","calendar":"persian","kcal":2000,"protein":56,"fiber":28,"water":1600,"activity":22,"breakLimit":60,"weight":70,"confirmed":false,"reminders":false,"wake":8,"sleep":22,"triggers":[]}""")
  fun blank() = JSONObject().put("version",1).put("settings",defaults()).put("days",JSONObject()).put("custom",JSONArray()).put("ui",JSONObject().put("sessions",JSONObject()).put("forms",JSONObject()))
  fun targets(s: JSONObject) = JSONObject().also { g -> goalKeys.forEach { g.put(it,s.getDouble(it)) } }
  fun day(s: JSONObject, date: String): JSONObject = s.getJSONObject("days").optJSONObject(date) ?: JSONObject().put("entries",JSONArray()).put("targets",targets(s.getJSONObject("settings"))).put("complete",false)
@@ -71,6 +71,10 @@ object Domain {
   require(settings.getString("lang") in listOf("fa","en")&&settings.getString("calendar") in listOf("persian","gregory"))
   require(settings.optString("theme","light") in listOf("light","dark"))
   (goalKeys+"weight").forEach { range(settings,it,0.001,10000.0) }
+  if(settings.recorded("height"))range(settings,"height",100.0,250.0)
+  if(settings.recorded("age")){range(settings,"age",18.0,120.0);require(settings.getDouble("age")%1==0.0)}
+  if(settings.has("calorieSex"))require(settings.getString("calorieSex") in listOf("unspecified","male","female"))
+  if(settings.has("activityLevel"))require(settings.getString("activityLevel") in Profile.activityLevels)
   require(settings.getInt("wake") in 0..22 && settings.getInt("sleep") in 1..23 && settings.getInt("wake")<settings.getInt("sleep"))
   require(s.getJSONArray("custom").length()<=1000);s.objects("custom").forEach{validateFood(it)}
   val days=s.getJSONObject("days");require(days.length()<=36600)

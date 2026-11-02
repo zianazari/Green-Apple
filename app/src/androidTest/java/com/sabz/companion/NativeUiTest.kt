@@ -18,7 +18,7 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class NativeUiTest {
  @get:Rule val rule=createAndroidComposeRule<MainActivity>()
- @Before fun setup(){rule.runOnIdle{val blank=Domain.blank();blank.getJSONObject("settings").put("confirmed",true);rule.activity.store.restore(blank.toString())}}
+ @Before fun setup(){rule.runOnIdle{val blank=Domain.blank();blank.getJSONObject("settings").put("confirmed",true).put("lang","fa");rule.activity.store.restore(blank.toString())}}
  @Test fun immediateFoodAndPersistentTheme(){
   rule.onNodeWithText("ثبت",useUnmergedTree=true).performClick()
   rule.onNodeWithText("دسته‌بندی‌ها").performScrollTo().performClick()
@@ -110,6 +110,46 @@ class NativeUiTest {
    val s=rule.activity.store;assertTrue(s.day(LocalDate.now()).getBoolean("complete"))
    assertFalse(Domain.coverage(s.day(LocalDate.now())))
   }
+ }
+
+ @Test fun englishProfileSetupAndCategoryScreen(){
+  rule.runOnIdle{rule.activity.store.restore(Domain.blank().toString())}
+  rule.onNodeWithContentDescription("Settings").performScrollTo().performClick()
+  rule.onNodeWithText("Height (cm)").performScrollTo().performTextInput("175")
+  rule.onNodeWithText("Weight (kg)").performTextReplacement("70")
+  rule.onNodeWithText("Age (years)").performTextInput("30")
+  rule.onNodeWithText("Male").performScrollTo().performClick()
+  rule.onNodeWithText("Use estimated targets").performScrollTo().performClick()
+  rule.onNodeWithText("I have reviewed these goals and they suit me.").performScrollTo().performClick()
+  rule.onNodeWithText("Save & confirm goals").performScrollTo().performClick()
+  rule.runOnIdle{
+   val s=rule.activity.store
+   assertEquals("en",s.settings.getString("lang"))
+   assertEquals(175.0,s.settings.getDouble("height"),0.0)
+   assertEquals(30,s.settings.getInt("age"))
+   assertEquals(2550.0,s.settings.getDouble("kcal"),0.0)
+   assertEquals(56.0,s.settings.getDouble("protein"),0.0)
+   val fresh=Store(rule.activity);assertEquals(175.0,fresh.settings.getDouble("height"),0.0)
+  }
+  rule.onNodeWithText("Log",useUnmergedTree=true).performClick()
+  rule.onNodeWithText("Categories").performScrollTo().performClick()
+  rule.onNodeWithText("⭐ My frequent foods").assertDoesNotExist()
+  rule.onNodeWithText("Vegetables").performScrollTo().performClick()
+  rule.onNodeWithText("⭐ My frequent foods").assertDoesNotExist()
+  rule.onNodeWithContentDescription("Raw carrot +").performScrollTo().performClick()
+  rule.runOnIdle{assertEquals(100.0,rule.activity.store.day(LocalDate.now()).objects("entries")[0].objects("items")[0].number("amount"),0.0)}
+ }
+ @Test fun compactCalendarHasDotsNotChecksAndAdjacentLogTab(){
+  rule.runOnIdle{val s=rule.activity.store;s.setSetting("lang","en");s.setSetting("calendar","gregory");s.mutate(LocalDate.now(),null){it.put("sitting",60)}}
+  val home=rule.onNodeWithText("Home",useUnmergedTree=true).fetchSemanticsNode().boundsInRoot
+  val log=rule.onNodeWithText("Log",useUnmergedTree=true).fetchSemanticsNode().boundsInRoot
+  val calendar=rule.onNodeWithText("Calendar",useUnmergedTree=true).fetchSemanticsNode().boundsInRoot
+  assertTrue(home.center.x<log.center.x&&log.center.x<calendar.center.x)
+  rule.onNodeWithText("Calendar",useUnmergedTree=true).performClick()
+  rule.onAllNodesWithText("Su").assertCountEquals(1)
+  rule.onAllNodesWithText("✓").assertCountEquals(0)
+  val label=rule.activity.store.dateLabel(LocalDate.now())+", recorded"
+  rule.onNodeWithContentDescription(label).assertExists()
  }
 
 }

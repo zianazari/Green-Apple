@@ -71,4 +71,29 @@ class DomainTest {
   assertFalse(NightReview.message(empty,false).contains("incomplete"))
  }
 
+ @Test fun adultEnergyEstimateUsesHeightWeightAndAgeTogether(){
+  val base=Profile.estimate(175.0,70.0,30,"male","inactive")
+  assertEquals(2552.67,base.calories,.000001)
+  assertEquals(56.0,base.protein,.000001)
+  assertEquals(2550.0,Profile.roundedCalories(base.calories),0.0)
+  assertEquals(2195.30,Profile.estimate(175.0,70.0,30,"female","inactive").calories,.000001)
+  assertEquals(2934.62,Profile.estimate(175.0,70.0,30,"male","active").calories,.000001)
+  assertEquals(65.0,Profile.estimate(185.0,70.0,30,"male","inactive").calories-base.calories,.000001)
+  assertEquals(141.0,Profile.estimate(175.0,80.0,30,"male","inactive").calories-base.calories,.000001)
+  assertEquals(-216.6,Profile.estimate(175.0,70.0,50,"male","inactive").calories-base.calories,.000001)
+  assertThrows(IllegalArgumentException::class.java){Profile.estimate(175.0,70.0,18,"male","inactive")}
+  assertThrows(IllegalArgumentException::class.java){Profile.estimate(175.0,70.0,30,"unspecified","inactive")}
+ }
+ @Test fun englishDefaultAndLegacyProfileCompatibility(){
+  assertEquals("en",Domain.defaults().getString("lang"))
+  val old=JSONObject(resource("legacy-v1.json"));Domain.validate(old)
+  assertEquals("fa",old.getJSONObject("settings").getString("lang"))
+  assertFalse(old.getJSONObject("settings").has("height"))
+  val historical=old.getJSONObject("days").toString()
+  old.getJSONObject("settings").put("height",175).put("age",30).put("weight",70).put("calorieSex","male").put("activityLevel","inactive").put("kcal",2550)
+  Domain.validate(old);assertEquals(historical,old.getJSONObject("days").toString())
+  old.getJSONObject("settings").put("height",-1)
+  assertThrows(IllegalArgumentException::class.java){Domain.validate(old)}
+ }
+
 }

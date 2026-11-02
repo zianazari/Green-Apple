@@ -7,6 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
 import android.icu.util.Calendar
@@ -19,23 +23,29 @@ import org.json.JSONObject
  var jump by rememberSaveable{mutableStateOf(false)}
  val first=CalendarTools.start(LocalDate.parse(anchor),persian)
  val length=CalendarTools.calendar(first,persian).getActualMaximum(Calendar.DAY_OF_MONTH)
- // Saturday first in Persian; Monday first in Gregorian.
- val offset=if(persian)(first.dayOfWeek.value+1)%7 else first.dayOfWeek.value-1
- Column(verticalArrangement=Arrangement.spacedBy(8.dp)){
+ val offset=if(persian)(first.dayOfWeek.value+1)%7 else first.dayOfWeek.value%7
+ Column(verticalArrangement=Arrangement.spacedBy(4.dp)){
   Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween,verticalAlignment=Alignment.CenterVertically){
-   TextButton(onClick={anchor=CalendarTools.shiftMonth(first,persian,-1).toString()}){Text("‹")}
-   TextButton(onClick={jump=true}){Text(CalendarTools.label(first,persian,s.fa,"MMMM yyyy"))}
-   TextButton(onClick={anchor=CalendarTools.shiftMonth(first,persian,1).toString()}){Text("›")}
+   IconButton(onClick={anchor=CalendarTools.shiftMonth(first,persian,-1).toString()},modifier=Modifier.semantics{contentDescription=s.t("ماه قبل","Previous month")}){Text("‹",fontSize=24.sp)}
+   TextButton(onClick={jump=true}){Text(CalendarTools.label(first,persian,s.fa,"MMMM yyyy")+" ▾")}
+   IconButton(onClick={anchor=CalendarTools.shiftMonth(first,persian,1).toString()},modifier=Modifier.semantics{contentDescription=s.t("ماه بعد","Next month")}){Text("›",fontSize=24.sp)}
   }
-  val weekdays=if(persian)if(s.fa)listOf("ش","ی","د","س","چ","پ","ج") else listOf("Sa","Su","Mo","Tu","We","Th","Fr") else if(s.fa)listOf("د","س","چ","پ","ج","ش","ی") else listOf("Mo","Tu","We","Th","Fr","Sa","Su")
-  Row(Modifier.fillMaxWidth()){weekdays.forEach{Text(it,modifier=Modifier.weight(1f),textAlign=androidx.compose.ui.text.style.TextAlign.Center,style=MaterialTheme.typography.labelSmall)}}
-  (0 until ((offset+length+6)/7)).forEach{row->
-   Row(Modifier.fillMaxWidth()){
-    (0..6).forEach{col->val day=row*7+col-offset+1
-     if(day !in 1..length)Spacer(Modifier.weight(1f).height(48.dp)) else{
-      val date=first.plusDays((day-1).toLong());val d=s.day(date);val recorded=d.objects("entries").isNotEmpty()
-      Surface(Modifier.weight(1f).heightIn(min=48.dp).padding(1.dp).clickable{onSelect(date)},shape=RoundedCornerShape(10.dp),color=if(date==selected)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha=if(recorded).8f else .2f),contentColor=if(date==selected)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface){
-       Column(Modifier.padding(vertical=5.dp),horizontalAlignment=Alignment.CenterHorizontally){Text(s.num(day));Text(if(d.optBoolean("complete"))"✓" else if(recorded)"•" else " ",fontSize=9.sp)}
+  CompositionLocalProvider(LocalLayoutDirection provides if(persian)LayoutDirection.Rtl else LayoutDirection.Ltr){
+   Column(verticalArrangement=Arrangement.spacedBy(4.dp)){
+    val weekdays=if(persian)if(s.fa)listOf("ش","ی","د","س","چ","پ","ج") else listOf("Sa","Su","Mo","Tu","We","Th","Fr") else if(s.fa)listOf("ی","د","س","چ","پ","ج","ش") else listOf("Su","Mo","Tu","We","Th","Fr","Sa")
+    Row(Modifier.fillMaxWidth()){weekdays.forEach{Text(it,modifier=Modifier.weight(1f).padding(vertical=4.dp),textAlign=androidx.compose.ui.text.style.TextAlign.Center,style=MaterialTheme.typography.labelSmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}}
+    (0 until ((offset+length+6)/7)).forEach{row->
+     Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(4.dp)){
+      (0..6).forEach{col->val day=row*7+col-offset+1
+       if(day !in 1..length)Spacer(Modifier.weight(1f).height(48.dp)) else{
+        val date=first.plusDays((day-1).toLong());val d=s.day(date);val recorded=d.objects("entries").isNotEmpty();val enabled=!date.isAfter(LocalDate.now());val chosen=date==selected;val today=date==LocalDate.now()
+        Surface(modifier=Modifier.weight(1f).height(48.dp).alpha(if(enabled)1f else .25f),shape=RoundedCornerShape(11.dp),color=if(chosen)MaterialTheme.colorScheme.primary else Color.Transparent,contentColor=if(chosen)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,border=if(today)BorderStroke(1.dp,MaterialTheme.colorScheme.primary) else null){
+         Box(Modifier.fillMaxSize().clickable(enabled=enabled){onSelect(date)}.semantics{contentDescription=s.dateLabel(date)+(if(recorded)s.t("، دارای ثبت",", recorded") else "");this.selected=chosen},contentAlignment=Alignment.Center){
+          Text(s.num(day))
+          if(recorded)Box(Modifier.align(Alignment.BottomCenter).padding(bottom=4.dp).size(4.dp).background(Color(0xFFE9A45F),RoundedCornerShape(50)))
+         }
+        }
+       }
       }
      }
     }
@@ -43,6 +53,7 @@ import org.json.JSONObject
   }
   TextButton(onClick={anchor=CalendarTools.start(LocalDate.now(),persian).toString();onSelect(LocalDate.now())}){Text(s.t("امروز","Today"))}
  }
+
  if(jump){
   val c=CalendarTools.calendar(first,persian)
   var year by rememberSaveable{mutableStateOf(c.get(Calendar.YEAR).toString())};var month by rememberSaveable{mutableStateOf((c.get(Calendar.MONTH)+1).toString())};var invalid by remember{mutableStateOf(false)}
@@ -51,9 +62,18 @@ import org.json.JSONObject
 }
 @Composable fun DateDialog(s:Store,selected:LocalDate,onDismiss:()->Unit,onSelect:(LocalDate)->Unit){AlertDialog(onDismissRequest=onDismiss,title={Text(s.t("انتخاب تاریخ","Choose date"))},text={CalendarGrid(s,selected,onSelect)},confirmButton={TextButton(onClick=onDismiss){Text(s.t("بستن","Close"))}})}
 @Composable fun HistoryScreen(s:Store,n:NavState){
- Panel{CalendarGrid(s,LocalDate.parse(n.date)){n.date=it.toString();n.go("details")};Hint(s.t("• دارای ثبت   ✓ روز کامل","• Recorded   ✓ Complete day"))}
+ Panel{CalendarGrid(s,LocalDate.parse(n.date)){n.date=it.toString();n.go("details")};Hint(s.t("نقطهٔ نارنجی: روز دارای ثبت · کادر دور عدد: امروز","Orange dot: recorded day · Outline: today"))}
  Heading(s.t("ثبت‌های اخیر","Recent records"))
- s.root.getJSONObject("days").keys().asSequence().toList().sortedDescending().take(60).forEach{key->val d=Domain.day(s.root,key);if(d.objects("entries").isNotEmpty())OutlinedButton(onClick={n.date=key;n.go("details")},modifier=Modifier.fillMaxWidth()){Text(s.dateLabel(LocalDate.parse(key))+" · "+s.num(d.objects("entries").size)+" "+s.t("نوبت","intervals"))}}
+ Panel{
+  val keys=s.root.getJSONObject("days").keys().asSequence().toList().filter{s.day(LocalDate.parse(it)).objects("entries").isNotEmpty()}.sortedDescending().take(60)
+  if(keys.isEmpty())Hint(s.t("پس از اولین ثبت، سابقه اینجا نمایش داده می‌شود.","Your first entry will appear here."))
+  keys.forEach{key->val date=LocalDate.parse(key);val d=s.day(date)
+   TextButton(onClick={n.date=key;n.go("details")},modifier=Modifier.fillMaxWidth()){
+    Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){Text(s.dateLabel(date),Modifier.weight(1f));Text(s.num(Domain.totals(d).getValue("kcal"))+" kcal ›")}
+   }
+  }
+ }
+
 }
 @Composable fun DetailsScreen(s:Store,n:NavState,act:(()->Unit)->Unit){
  val date=LocalDate.parse(n.date);val d=s.day(date);val v=Domain.totals(d)
