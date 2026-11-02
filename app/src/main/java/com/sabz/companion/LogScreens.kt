@@ -26,7 +26,7 @@ import kotlin.math.*
 
 @Composable fun FoodRow(s:Store,n:NavState,f:JSONObject,act:(()->Unit)->Unit){
  val date=LocalDate.parse(n.date);val e=s.entry(date,n.edit,n.clock);val amount=e.objects("items").filter{it.getJSONObject("food").getString("id")==f.getString("id")}.sumOf{it.number("amount")}
- Surface(shape=RoundedCornerShape(16.dp),color=if(s.dark)androidx.compose.ui.graphics.Color(0xFF303747) else androidx.compose.ui.graphics.Color(0xFFF0F4EF)){
+ Surface(shape=RoundedCornerShape(16.dp),color=if(s.dark)androidx.compose.ui.graphics.Color(0xFF22344E) else androidx.compose.ui.graphics.Color(0xFFF0F4EF)){
  Column(Modifier.fillMaxWidth().padding(10.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
   Row(Modifier.fillMaxWidth().clickable{n.foodId=f.getString("id");n.dialog="food"}.padding(vertical=3.dp),verticalAlignment=Alignment.CenterVertically){
    FoodArt(f.optString("emoji"),32);Spacer(Modifier.width(10.dp));Text(s.foodName(f),modifier=Modifier.weight(1f));Text("ⓘ",color=MaterialTheme.colorScheme.primary)

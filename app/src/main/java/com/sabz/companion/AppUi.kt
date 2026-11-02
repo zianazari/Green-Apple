@@ -36,7 +36,7 @@ class NavState {
  fun back(){if(dialog!=null){dialog=null;return};when(page){"foods"->if(category!=null||search.isNotBlank()){category=null;search=""}else page="quick";"quick"->go(if(edit!=null)"details" else "home");else->go("home")}}
  companion object {val Saver=listSaver<NavState,String>(save={listOf(it.page,it.date,it.edit?:"",it.category?:"",it.search,it.dialog?:"",it.foodId?:"")},restore={v->NavState().apply{page=v[0];date=v[1];edit=v[2].ifEmpty{null};category=v[3].ifEmpty{null};search=v[4];dialog=v[5].ifEmpty{null};foodId=v[6].ifEmpty{null}}})}
 }
-private val Dark=darkColorScheme(primary=Color(0xFF82AAFF),onPrimary=Color(0xFF181A20),background=Color(0xFF181A20),onBackground=Color(0xFFECEFF4),surface=Color(0xFF252832),onSurface=Color(0xFFECEFF4),surfaceVariant=Color(0xFF292F42),secondaryContainer=Color(0xFF353E57),onSecondaryContainer=Color(0xFF82AAFF),onSurfaceVariant=Color(0xFFACB1C1),outline=Color(0xFF3A3E4C))
+private val Dark=darkColorScheme(primary=Color(0xFF60A5FA),onPrimary=Color(0xFF0F172A),background=Color(0xFF0F172A),onBackground=Color(0xFFF1F5F9),surface=Color(0xFF1E293B),onSurface=Color(0xFFF1F5F9),surfaceVariant=Color(0xFF172B4A),secondaryContainer=Color(0xFF203B60),onSecondaryContainer=Color(0xFF60A5FA),onSurfaceVariant=Color(0xFF94A3B8),outline=Color(0xFF334155))
 private val Light=lightColorScheme(primary=Color(0xFF087F78),onPrimary=Color.White,background=Color(0xFFF8F8F2),onBackground=Color(0xFF163E3B),surface=Color.White,onSurface=Color(0xFF163E3B),surfaceVariant=Color(0xFFEAF3EE),secondaryContainer=Color(0xFFEAF3EE),onSecondaryContainer=Color(0xFF087F78),onSurfaceVariant=Color(0xFF657C76),outline=Color(0xFFDCE6DF))
 val AppFont=FontFamily(Font(R.font.vazirmatn))
 val AppTypography=Typography().let{b->b.copy(

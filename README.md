@@ -8,7 +8,7 @@ An offline Android companion for tracking food, water, movement and everyday hab
 
 ## Screenshots
 
-The English interface, captured from version **2.1.0** on an Android emulator. All records shown are sample data.
+The English interface, captured from version **2.1.0** on an Android emulator. All records shown are sample data. Version 2.1.1 restores the midnight-blue dark palette; these screenshots show the previous dark palette.
 
 <table>
   <tr>
@@ -42,7 +42,7 @@ The English interface, captured from version **2.1.0** on an Android emulator. A
 - **Follow your habits over time.** An animated green apple accompanies your seven-day habit score. Only finished days with known nutrition contribute to the average.
 - **Keep and export your records.** Save a native PDF report for a range of up to 31 days, or export and restore a JSON backup.
 
-English and Persian interfaces include right-to-left support and the bundled Vazirmatn font. Light and charcoal-blue dark themes are available. Language, theme and calendar options are visible together in Settings. English is the default for new installations; existing language preferences are preserved. The Log tab sits next to Home, and frequent foods appear only in Quick log. Calendars use orange dots for recorded days, an outline for today, Saturday-first Persian weeks and Sunday-first Gregorian weeks.
+English and Persian interfaces include right-to-left support and the bundled Vazirmatn font. Light and midnight-blue dark themes are available. Language, theme and calendar options are visible together in Settings. English is the default for new installations; existing language preferences are preserved. The Log tab sits next to Home, and frequent foods appear only in Quick log. Calendars use orange dots for recorded days, an outline for today, Saturday-first Persian weeks and Sunday-first Gregorian weeks.
 
 ## Install or update
 
@@ -53,7 +53,7 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.1.0](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.0). Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+The latest published version is [2.1.1](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.1), which restores the midnight-blue dark palette. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
 
 ## Initial profile and goal estimates
 

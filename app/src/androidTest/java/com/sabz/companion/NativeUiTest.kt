@@ -33,7 +33,7 @@ class NativeUiTest {
   rule.onNodeWithContentDescription("هویج خام +").performScrollTo().performClick()
   rule.runOnIdle{assertEquals(120.0,rule.activity.store.day(LocalDate.now()).objects("entries")[0].objects("items")[0].number("amount"),0.0)}
   rule.onNodeWithContentDescription("تنظیمات").performScrollTo().performClick()
-  rule.onNodeWithText("☾ ذغالی و آبی").performClick()
+  rule.onNodeWithText("☾ آبی نیمه‌شب").performClick()
   rule.onNodeWithText("🇬🇧 English").performClick()
   rule.onNodeWithText("Gregorian").performClick()
   rule.runOnIdle{

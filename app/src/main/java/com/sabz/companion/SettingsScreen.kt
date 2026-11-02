@@ -25,7 +25,7 @@ import java.time.LocalDate
 @Composable fun SettingsScreen(s:Store,host:MainActivity,act:(()->Unit)->Unit){
  Panel{
   Heading(s.t("ظاهر، زبان و تاریخ","Appearance, language & calendar"))
-  ChoiceGroup(s.t("تم برنامه","App theme"),s.settings.optString("theme","light"),listOf("light" to s.t("☀ روشن","☀ Light"),"dark" to s.t("☾ ذغالی و آبی","☾ Charcoal & blue"))){act{s.setSetting("theme",it)}}
+  ChoiceGroup(s.t("تم برنامه","App theme"),s.settings.optString("theme","light"),listOf("light" to s.t("☀ روشن","☀ Light"),"dark" to s.t("☾ آبی نیمه‌شب","☾ Midnight blue"))){act{s.setSetting("theme",it)}}
   ChoiceGroup(s.t("زبان","Language"),s.settings.getString("lang"),listOf("fa" to "🇮🇷 فارسی","en" to "🇬🇧 English")){act{s.setSetting("lang",it)}}
   ChoiceGroup(s.t("تقویم","Calendar"),s.settings.getString("calendar"),listOf("persian" to s.t("هجری شمسی","Solar Hijri"),"gregory" to s.t("میلادی","Gregorian"))){act{s.setSetting("calendar",it)}}
  }
@@ -80,7 +80,7 @@ import java.time.LocalDate
  Panel{
   Heading(s.t("منابع و توضیحات","Sources & notes"));Hint(s.t("بررسی منابع: ۲۲ اکتبر ۲۰۲۶. بانک خوراکی‌ها: USDA SR Legacy ۲۰۱۸. سیب سلامت برای پیگیری عمومی تغذیه، آب و فعالیت است؛ مقادیر غذایی تقریبی‌اند.","Sources reviewed October 22, 2026. Food data: USDA SR Legacy 2018. Green Apple tracks general nutrition, water and activity; nutrient values are approximate."))
   listOf("Health Canada · Adult energy estimates" to Profile.SOURCE,"NIDDK · Fiber & fluids" to "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/eating-diet-nutrition","FDA · Calorie reference" to "https://www.fda.gov/food/nutrition-facts-label/calories-nutrition-facts-label","National Academies · Protein DRI" to "https://www.ncbi.nlm.nih.gov/books/NBK235261/","WHO · Physical activity" to "https://www.who.int/news-room/fact-sheets/detail/physical-activity","USDA · FoodData Central" to "https://fdc.nal.usda.gov/download-datasets/").forEach{(title,url)->TextButton(onClick={act{host.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))}}){Text(title+" ↗")}}
-  Hint(s.t("سیب سلامت","Green Apple")+" 2.1.0 · Android 11+\nKotlin · Jetpack Compose · Vazirmatn / SIL OFL")
+  Hint(s.t("سیب سلامت","Green Apple")+" 2.1.1 · Android 11+\nKotlin · Jetpack Compose · Vazirmatn / SIL OFL")
  }
 }
 @Composable fun CustomDialog(s:Store,onDismiss:()->Unit,onSave:(JSONObject)->Unit){
