@@ -6,6 +6,18 @@ An offline Android companion for tracking food, water, movement and everyday hab
 
 [Download the latest release](https://github.com/zianazari/Green-Apple/releases/latest) · [Browse the source](app/src/main/java/com/sabz/companion)
 
+## Technology
+
+<p align="left">
+  <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle&amp;theme=dark" alt="Kotlin, Android Studio, and Gradle" />
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&amp;logo=android&amp;logoColor=white" alt="Android" />
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&amp;logo=jetpackcompose&amp;logoColor=white" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Material%203-757575?style=for-the-badge&amp;logo=materialdesign&amp;logoColor=white" alt="Material 3" />
+  <img src="https://img.shields.io/badge/JUnit%204-25A162?style=for-the-badge" alt="JUnit 4" />
+</p>
+
+Native Android APIs handle local JSON storage, notifications, Persian/Gregorian calendars and PDF export.
+
 ## Screenshots
 
 The English interface, captured from version **2.1.0** on an Android emulator. All records shown are sample data. Version 2.1.1 restores the midnight-blue dark palette; these screenshots show the previous dark palette.
