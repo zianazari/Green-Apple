@@ -8,6 +8,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 private val foodArt=mapOf(
+ "🍫" to R.drawable.food_1f36b,
+ "🍰" to R.drawable.food_1f370,
  "💧" to R.drawable.food_1f4a7,
  "🥤" to R.drawable.food_1f964,
  "🍚" to R.drawable.food_1f35a,

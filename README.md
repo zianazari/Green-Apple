@@ -71,7 +71,7 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.1.2](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.2), which makes Trends more compact and aligns its typography with Home. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+The latest published version is [2.1.3](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.3), which adds grapes, milk chocolate and cream cake to the food catalogue. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
 
 ## Initial profile and goal estimates
 
@@ -157,7 +157,7 @@ All production application code is Kotlin. Screens use Jetpack Compose, reports 
 
 ## Data, artwork and attribution
 
-- **Nutrition catalogue:** USDA SR Legacy (2018). Food source identifiers are included in the bundled catalogue.
+- **Nutrition catalogue:** [USDA SR Legacy (2018)](https://fdc.nal.usda.gov/download-datasets/). Food source identifiers are included in the bundled catalogue. Grapes use FDC 174683; milk chocolate uses FDC 167587. Cream cake is an explicitly labelled recipe estimate: 70% commercially prepared sponge cake (FDC 172706) and 30% whipped cream topping (FDC 170860). Values are stored per 100 g and scale with the logged portion. Its default portion is 100 g, as for grapes; milk chocolate starts at 30 g.
 - **Typography:** [Vazirmatn](https://github.com/rastikerdar/vazirmatn), distributed under the [SIL Open Font License](app/src/main/assets/Vazirmatn-OFL.txt).
 - **Food illustrations:** Twemoji, copyright Twitter and jdecked contributors, licensed under [CC BY 4.0](app/src/main/assets/art/LICENSE-GRAPHICS). Original SVG sources are retained in <code>app/src/main/assets/art/</code>; displayed artwork is converted to native Android vectors.
 - **Green apple companion and launcher icon:** maintained as native vector artwork in this project.

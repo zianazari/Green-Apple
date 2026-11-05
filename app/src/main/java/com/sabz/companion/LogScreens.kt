@@ -126,6 +126,7 @@ fun activityName(s:Store,id:String)=when(id){"walk"->s.t("پیاده‌روی","
   OutlinedTextField(exact,{v->exact=v;act{s.cache("food:"+n.date+":"+e.getString("id")+":"+f.getString("id"),v)};v.inputNumber().toDoubleOrNull()?.takeIf{it in 0.0..20000.0}?.let{value->act{s.food(LocalDate.parse(n.date),n.edit,f,exact=value)}}},label={Text(s.t("مقدار دقیق","Exact amount")+" ("+if(f.optBoolean("drink"))"ml)" else s.t("گرم)","g)"))},keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal))
   Hint(s.t("ارزش غذایی در هر ۱۰۰ گرم یا میلی‌لیتر:","Nutrition per 100 g or ml:"))
   listOf("kcal" to s.t("کالری","Calories"),"protein" to s.t("پروتئین","Protein"),"fiber" to s.t("فیبر","Fiber")).forEach{(k,label)->Text(label+": "+if(f.isNull(k))s.t("نامشخص","Unknown") else s.num(f.number(k),1))}
+  if(f.has("recipeNoteEn"))Hint(s.t(f.optString("recipeNoteFa"),f.optString("recipeNoteEn")))
   if(f.optBoolean("approx"))Hint(s.t("تبدیل حجم به وزن تقریبی است.","Volume-to-weight conversion is approximate."))
   Hint(s.t("منبع: ","Source: ")+f.optString("source",s.t("کاربر","User"))+if(f.has("fdcId"))" · FDC "+f.optString("fdcId") else "")
  }},confirmButton={TextButton(onClick={n.dialog=null}){Text(s.t("بستن","Close"))}})
