@@ -8,19 +8,25 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.*
 import androidx.compose.ui.semantics.*
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
 import org.json.*
 import java.time.LocalDate
 import kotlin.math.*
 
-@Composable fun Stepper(label:String,value:String,minus:()->Unit,plus:()->Unit,enabledMinus:Boolean=true){
+@Composable fun Stepper(label:String,value:String,minus:()->Unit,plus:()->Unit,enabledMinus:Boolean=true,fixedButtonOrder:Boolean=false){
+ val textDirection=LocalLayoutDirection.current
  Surface(shape=RoundedCornerShape(14.dp),color=MaterialTheme.colorScheme.surfaceVariant){
+  CompositionLocalProvider(LocalLayoutDirection provides if(fixedButtonOrder) LayoutDirection.Ltr else textDirection){
   Row(Modifier.fillMaxWidth().padding(4.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.SpaceBetween){
    FilledTonalButton(onClick=minus,enabled=enabledMinus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label −"},shape=RoundedCornerShape(11.dp)){Text("−",fontSize=22.sp)}
-   Text(value,modifier=Modifier.weight(1f),textAlign=androidx.compose.ui.text.style.TextAlign.Center)
+   CompositionLocalProvider(LocalLayoutDirection provides textDirection){
+    Text(value,modifier=Modifier.weight(1f),textAlign=androidx.compose.ui.text.style.TextAlign.Center)
+   }
    FilledTonalButton(onClick=plus,contentPadding=PaddingValues(0.dp),modifier=Modifier.size(48.dp).semantics{contentDescription="$label +"},shape=RoundedCornerShape(11.dp)){Text("+",fontSize=22.sp)}
   }
+ }
  }
 }
 
@@ -31,7 +37,7 @@ import kotlin.math.*
   Row(Modifier.fillMaxWidth().clickable{n.foodId=f.getString("id");n.dialog="food"}.padding(vertical=3.dp),verticalAlignment=Alignment.CenterVertically){
    FoodArt(f.optString("emoji"),32);Spacer(Modifier.width(10.dp));Text(s.foodName(f),modifier=Modifier.weight(1f));Text("ⓘ",color=MaterialTheme.colorScheme.primary)
   }
-  Stepper(s.foodName(f),if(f.optBoolean("drink"))s.num(amount/200,1)+" "+s.t("لیوان","glasses") else s.num(amount,1)+" "+s.t("گرم","g"),{act{s.food(date,n.edit,f,-1)}},{act{s.food(date,n.edit,f)}},amount>0)
+  Stepper(s.foodName(f),if(f.optBoolean("drink"))s.num(amount/200,1)+" "+s.t("لیوان","glasses") else s.num(amount,1)+" "+s.t("گرم","g"),{act{s.food(date,n.edit,f,-1)}},{act{s.food(date,n.edit,f)}},amount>0,fixedButtonOrder=true)
  }
 }
 }

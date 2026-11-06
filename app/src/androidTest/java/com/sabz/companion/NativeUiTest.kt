@@ -19,6 +19,26 @@ import java.io.File
 class NativeUiTest {
  @get:Rule val rule=createAndroidComposeRule<MainActivity>()
  @Before fun setup(){rule.runOnIdle{val blank=Domain.blank();blank.getJSONObject("settings").put("confirmed",true).put("lang","fa");rule.activity.store.restore(blank.toString())}}
+ @Test fun foodButtonsStayRightHandedInBothLanguages(){
+  rule.onNodeWithText("ثبت",useUnmergedTree=true).performClick()
+  rule.onNodeWithText("دسته‌بندی‌ها").performScrollTo().performClick()
+  rule.onNodeWithText("سبزیجات").performScrollTo().performClick()
+  for((lang,label) in listOf("fa" to "هویج خام","en" to "Raw carrot")){
+   rule.runOnIdle{rule.activity.store.setSetting("lang",lang)}
+   val plus=rule.onNodeWithContentDescription("$label +")
+   val minus=rule.onNodeWithContentDescription("$label −")
+   plus.performScrollTo()
+   assertTrue(plus.fetchSemanticsNode().boundsInRoot.left>minus.fetchSemanticsNode().boundsInRoot.right)
+   plus.performClick()
+   rule.runOnIdle{assertEquals(100.0,rule.activity.store.day(LocalDate.now()).objects("entries")[0].objects("items")[0].number("amount"),0.0)}
+   minus.performClick()
+   rule.runOnIdle{
+    val store=rule.activity.store
+    assertEquals(80.0,store.day(LocalDate.now()).objects("entries")[0].objects("items")[0].number("amount"),0.0)
+    store.food(LocalDate.now(),null,store.foods().first{it.getString("en")=="Raw carrot"},exact=0.0)
+   }
+  }
+ }
  @Test fun immediateFoodAndPersistentTheme(){
   rule.onNodeWithText("ثبت",useUnmergedTree=true).performClick()
   rule.onNodeWithText("دسته‌بندی‌ها").performScrollTo().performClick()

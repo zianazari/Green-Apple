@@ -71,7 +71,7 @@ English and Persian interfaces include right-to-left support and the bundled Vaz
 
 Do not uninstall the previous version when updating. Export a JSON backup before uninstalling or changing phones.
 
-The latest published version is [2.1.3](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.3), which adds grapes, milk chocolate and cream cake to the food catalogue. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
+The latest published version is [2.1.4](https://github.com/zianazari/Green-Apple/releases/tag/v2.1.4), which keeps food portion **+** buttons on the right and **−** buttons on the left in both English and Persian. Android displays **Green Apple** during installation and beneath the launcher icon, regardless of the selected interface language. Day completion remains immediate even when some or all fields are empty.
 
 ## Initial profile and goal estimates
 
